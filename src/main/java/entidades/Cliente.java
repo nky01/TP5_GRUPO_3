@@ -9,11 +9,6 @@ public class Cliente {
 	private String apellido;
 	
 	public Cliente() {
-		this.id= 0;
-		this.dni = 12345678;
-		this.cuil = 20333444555L;
-		this.nombre = "nombre";
-		this.apellido = "apellido";
 	}
 	
 	public Cliente(int dni, long cuil, String nombre, String apellido) {
