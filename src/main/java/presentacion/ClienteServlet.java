@@ -38,15 +38,15 @@ public class ClienteServlet extends HttpServlet {
         String exito = "";
 
         if(dniStr.isEmpty() || cuilStr.isEmpty() || nombre.isEmpty() || apellido.isEmpty()) {
-            error = "Debe ingresar todos los campos para poder continuar.";
+            error = "tiene que completar todos los datos";
         } else if(!dniStr.matches("\\d{6,8}")) {
-            error = "DNI inválido. Debe tener entre 6 y 8 dígitos.";
+            error = "DNI invalido. ingrese de 6 a 8 digitos";
         } else if(!cuilStr.matches("\\d{11}")) {
-            error = "CUIL inválido. Debe tener 11 dígitos.";
+            error = "CUIL invalido. solo ingreso de 11 digitos";
         } else if(!nombre.matches("[a-zA-Z]+")) {
-            error = "Nombre inválido. Solo se permiten letras.";
+            error = "solo letras";
         } else if(!apellido.matches("[a-zA-Z]+")) {
-            error = "Apellido inválido. Solo se permiten letras.";
+            error = "solo letras";
         } else {
             int dni = Integer.parseInt(dniStr);
             long cuil = Long.parseLong(cuilStr);
@@ -54,7 +54,7 @@ public class ClienteServlet extends HttpServlet {
 
             ClienteDAO dao = new ClienteDAO();
             if(dao.insertarCliente(cliente)) {
-                exito = "Genial! el cliente guardado correctamente";
+                exito = "Genial! el cliente fue guardado correctamente";
             } else {
                 error = "Error al guardar el cliente en la bd";
             }
