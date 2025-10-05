@@ -100,7 +100,10 @@ public class ClienteServlet extends HttpServlet {
                         exito = "✅ Cliente registrado correctamente.";
                     } else {
                         error = "❌ Error al guardar el cliente en la base de datos.";
+                        
                     }
+                    
+                    
                 }
             }
 
