@@ -2,7 +2,10 @@ package datos;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
 import entidades.Cliente;
 
 public class ClienteDAO extends DAO {
@@ -50,4 +53,29 @@ public class ClienteDAO extends DAO {
 
         return insertado;
     }
-}
+    public ArrayList<Cliente> listarClientes() throws SQLException {
+    	ArrayList<Cliente> lista = new ArrayList<>();
+        String sql = "SELECT * FROM clientes";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Cliente c = new Cliente();
+                c.setDni(rs.getString("dni"));
+                c.setCuil(rs.getString("cuil"));
+                c.setNombre(rs.getString("nombre"));
+                c.setApellido(rs.getString("apellido"));
+                c.setSexo(rs.getString("sexo").charAt(0));
+                c.setFecha_nacimiento(rs.getDate("fecha_nacimiento"));
+                c.setDireccion(rs.getString("direccion"));
+                c.setNacionalidad(rs.getString("nacionalidad"));
+                c.setLocalidad(rs.getString("localidad"));
+                c.setProvincia(rs.getString("provincia"));
+                lista.add(c);
+            }
+        }
+        return lista;
+    }
+  }

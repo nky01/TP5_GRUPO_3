@@ -29,7 +29,7 @@
     <div class="sidebar">
     <h3>Menú</h3>
     <a href="AltaCliente.jsp" class="active">Alta de Cliente</a>
-    <a href="ListadoClientes.jsp">Listado de Clientes</a>
+    <a href="ListarServlet">Listado de Clientes</a>
 	</div>
 
  
