@@ -13,6 +13,7 @@
     int paginaActual = (request.getAttribute("paginaActual") != null) 
                         ? (Integer) request.getAttribute("paginaActual") : 1;
     ArrayList<Cliente> clientes = (ArrayList<Cliente>) request.getAttribute("clientes");
+    String buscar = request.getAttribute("buscar") != null ? (String) request.getAttribute("buscar") : "";
 %>
 
 <!DOCTYPE html>
@@ -49,7 +50,14 @@
 	    </select>
 	    <span class="fw-normal">registros</span>
 	</div>
-
+	
+	<div class="mb-3">
+        <form action="ListarServlet" method="get" class="d-flex">
+            <input type="text" name="buscar" class="form-control me-2" placeholder="Buscar por DNI, nombre o apellido" value="<%= buscar %>">
+            <input type="hidden" name="cantidad" value="<%= request.getAttribute("tamañoPagina") %>">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+     </div>
 	
 	
     <div class="form-container">
@@ -101,18 +109,21 @@
 		<p class="text-muted">
 		    Mostrando <%= inicio %> a <%= fin %> de <%= totalRegistros %> registros
 		</p>
-		        
-
-        <div class="d-flex justify-content-center mt-3">
+		
+		<div class="d-flex justify-content-center mt-3">
             <% if (paginaActual > 1) { %>
-                <a class="btn btn-primary me-2" href="ListarServlet?pagina=<%=paginaActual-1%>&cantidad=<%=request.getAttribute("tamañoPagina")%>">Anterior</a>
+                <a class="btn btn-primary me-2" href="ListarServlet?pagina=<%=paginaActual-1%>&cantidad=<%=tamañoPagina%>&buscar=<%=buscar%>">Anterior</a>
             <% } else { %>
                 <button class="btn btn-secondary me-2" disabled>Anterior</button>
             <% } %>
 
             <span class="btn btn-light disabled">Página <%=paginaActual%></span>
 
-            <a class="btn btn-primary ms-2" href="ListarServlet?pagina=<%=paginaActual+1%>&cantidad=<%=request.getAttribute("tamañoPagina")%>">Siguiente</a>
+            <% if (fin < totalRegistros) { %>
+                <a class="btn btn-primary ms-2" href="ListarServlet?pagina=<%=paginaActual+1%>&cantidad=<%=tamañoPagina%>&buscar=<%=buscar%>">Siguiente</a>
+            <% } else { %>
+                <button class="btn btn-secondary ms-2" disabled>Siguiente</button>
+            <% } %>
         </div>
 
     </div>
@@ -122,7 +133,8 @@
 <script>
 function cambiarCantidad(valor) {
     const paginaActual = <%= paginaActual %>;
-    window.location.href = "ListarServlet?cantidad=" + valor + "&pagina=" + paginaActual;
+    const buscar = "<%= buscar %>";
+    window.location.href = "ListarServlet?cantidad=" + valor + "&pagina=" + paginaActual + "&buscar=" + buscar;
 }
 </script>
 

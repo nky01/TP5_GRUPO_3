@@ -32,46 +32,52 @@ public class ListarServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String busqueda = request.getParameter("buscar");
+        int pagina = 1;
+        int tamañoPagina = 5;
+
+        try {
+            if (request.getParameter("pagina") != null) {
+                pagina = Integer.parseInt(request.getParameter("pagina"));
+                if (pagina < 1) pagina = 1;
+            }
+        } catch (NumberFormatException e) {
+            pagina = 1;
+        }
+
+        try {
+            if (request.getParameter("cantidad") != null) {
+                tamañoPagina = Integer.parseInt(request.getParameter("cantidad"));
+            }
+        } catch (NumberFormatException e) {
+            tamañoPagina = 5;
+        }
+
         try {
             ClienteDAO dao = new ClienteDAO();
-            
-            int pagina = 1;
-            String parametroPagina = request.getParameter("pagina");
-            if (parametroPagina != null) {
-                try {
-                    pagina = Integer.parseInt(parametroPagina);
-                    if (pagina < 1) pagina = 1;
-                } catch (NumberFormatException e) {
-                    pagina = 1;
-                }
+            ArrayList<Cliente> lista;
+            int totalRegistros;
+
+            if (busqueda != null && !busqueda.isEmpty()) {
+            	lista = dao.buscarClientes(busqueda); 
+                totalRegistros = lista.size();
+            } else {
+                lista = dao.listarClientesPaginados(pagina, tamañoPagina);
+                totalRegistros = dao.contarClientes();
             }
-            
-            int tamañoPagina = 5;
-            
-            String parametroCantidad = request.getParameter("cantidad");
-            if (parametroCantidad != null) {
-                try {
-                    tamañoPagina = Integer.parseInt(parametroCantidad);
-                } catch (NumberFormatException e) {
-                    tamañoPagina = 5;
-                }
-            }
-            
-            ArrayList<Cliente> lista = dao.listarClientesPaginados(pagina, tamañoPagina);
-            int totalRegistros = dao.contarClientes();
-            
+
             request.setAttribute("clientes", lista);
             request.setAttribute("paginaActual", pagina);
             request.setAttribute("totalRegistros", totalRegistros);
             request.setAttribute("tamañoPagina", tamañoPagina);
-            
+            request.setAttribute("buscar", busqueda);
+
             RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/ListadoDeClientes.jsp");
             rd.forward(request, response);
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-
 }

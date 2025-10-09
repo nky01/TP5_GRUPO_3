@@ -156,6 +156,42 @@ public class ClienteDAO extends DAO {
 
         return total;
     }
+    
+    public ArrayList<Cliente> buscarClientes(String criterio) {
+        ArrayList<Cliente> lista = new ArrayList<>();
+        String sql = "SELECT * FROM clientes WHERE dni LIKE ? OR nombre LIKE ? OR apellido LIKE ? ORDER BY apellido, nombre";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, "%" + criterio + "%");
+            ps.setString(2, "%" + criterio + "%");
+            ps.setString(3, "%" + criterio + "%");
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Cliente c = new Cliente();
+                    c.setDni(rs.getString("dni"));
+                    c.setCuil(rs.getString("cuil"));
+                    c.setNombre(rs.getString("nombre"));
+                    c.setApellido(rs.getString("apellido"));
+                    c.setSexo(rs.getString("sexo").charAt(0));
+                    c.setFecha_nacimiento(rs.getDate("fecha_nacimiento"));
+                    c.setDireccion(rs.getString("direccion"));
+                    c.setNacionalidad(rs.getString("nacionalidad"));
+                    c.setLocalidad(rs.getString("localidad"));
+                    c.setProvincia(rs.getString("provincia"));
+                    lista.add(c);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("❌ Error SQL al buscar clientes: " + e.getMessage());
+        }
+
+        return lista;
+    }
+
 
 
 }
