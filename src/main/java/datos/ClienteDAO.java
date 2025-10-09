@@ -78,6 +78,42 @@ public class ClienteDAO extends DAO {
         }
         return lista;
     }
+    public ArrayList<Cliente> listarClientesPaginados(int pagina, int tamañoPagina) throws SQLException {
+        ArrayList<Cliente> lista = new ArrayList<>();
+        String sql = "SELECT * FROM clientes ORDER BY apellido, nombre LIMIT ? OFFSET ?";
+
+        int offset = (pagina - 1) * tamañoPagina;
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, tamañoPagina);
+            ps.setInt(2, offset);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Cliente c = new Cliente();
+                    c.setDni(rs.getString("dni"));
+                    c.setCuil(rs.getString("cuil"));
+                    c.setNombre(rs.getString("nombre"));
+                    c.setApellido(rs.getString("apellido"));
+                    c.setSexo(rs.getString("sexo").charAt(0));
+                    c.setFecha_nacimiento(rs.getDate("fecha_nacimiento"));
+                    c.setDireccion(rs.getString("direccion"));
+                    c.setNacionalidad(rs.getString("nacionalidad"));
+                    c.setLocalidad(rs.getString("localidad"));
+                    c.setProvincia(rs.getString("provincia"));
+                    lista.add(c);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error SQL al listar clientes paginados: " + e.getMessage());
+        }
+
+        return lista;
+    }
+
+    
     public boolean existeCorreo(String correo) {
         boolean existe = false;
         String sql = "SELECT COUNT(*) FROM clientes WHERE correo_electronico = ?";

@@ -31,27 +31,32 @@ public class ListarServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		
-		try {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
             ClienteDAO dao = new ClienteDAO();
-            ArrayList<Cliente> lista = dao.listarClientes();  // este método lo creás abajo
+            
+            int pagina = 1;
+            String parametroPagina = request.getParameter("pagina");
+            if (parametroPagina != null) {
+                try {
+                    pagina = Integer.parseInt(parametroPagina);
+                    if (pagina < 1) pagina = 1;
+                } catch (NumberFormatException e) {
+                    pagina = 1;
+                }
+            }
+            
+            int tamañoPagina = 5;
+            ArrayList<Cliente> lista = dao.listarClientesPaginados(pagina, tamañoPagina);
+            
             request.setAttribute("clientes", lista);
+            request.setAttribute("paginaActual", pagina);
             RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/ListadoDeClientes.jsp");
             rd.forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
         }
-		
-	}
+    }
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
 
 }
