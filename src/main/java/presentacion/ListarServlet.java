@@ -47,12 +47,27 @@ public class ListarServlet extends HttpServlet {
             }
             
             int tamañoPagina = 5;
+            
+            String parametroCantidad = request.getParameter("cantidad");
+            if (parametroCantidad != null) {
+                try {
+                    tamañoPagina = Integer.parseInt(parametroCantidad);
+                } catch (NumberFormatException e) {
+                    tamañoPagina = 5;
+                }
+            }
+            
             ArrayList<Cliente> lista = dao.listarClientesPaginados(pagina, tamañoPagina);
+            int totalRegistros = dao.contarClientes();
             
             request.setAttribute("clientes", lista);
             request.setAttribute("paginaActual", pagina);
+            request.setAttribute("totalRegistros", totalRegistros);
+            request.setAttribute("tamañoPagina", tamañoPagina);
+            
             RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/ListadoDeClientes.jsp");
             rd.forward(request, response);
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -34,8 +34,24 @@
 
 <div class="content">
     <h1>Listado de Clientes</h1>
+    <br>
     <p class="user-info">Usuario: <strong><%= u.getUsuario() %></strong></p>
 
+	<p class="user-info">Listado de Clientes <strong>(<%= request.getAttribute("totalRegistros") != null 
+        ? request.getAttribute("totalRegistros") 
+        : (clientes != null ? clientes.size() : 0) %>)</strong></p>
+        
+	<div class="d-flex align-items-center mb-3">
+	    <label for="cantidad" class="me-2 mb-0 fw-normal">Mostrar</label>
+	    <select id="cantidad" name="cantidad" class="form-select form-select-sm me-2" style="width: auto;" onchange="cambiarCantidad(this.value)">
+	        <option value="5"  <%= (request.getAttribute("tamañoPagina") != null && (int)request.getAttribute("tamañoPagina") == 5)  ? "selected" : "" %>>5</option>
+	        <option value="10" <%= (request.getAttribute("tamañoPagina") != null && (int)request.getAttribute("tamañoPagina") == 10) ? "selected" : "" %>>10</option>
+	    </select>
+	    <span class="fw-normal">registros</span>
+	</div>
+
+	
+	
     <div class="form-container">
         <table class="table table-striped table-bordered">
             <thead>
@@ -70,22 +86,45 @@
                 <%  } } %>
             </tbody>
         </table>
+        
+        <%
+		    int totalRegistros = (request.getAttribute("totalRegistros") != null) 
+		                            ? (Integer) request.getAttribute("totalRegistros") : 0;
+		    int tamañoPagina = (request.getAttribute("tamañoPagina") != null) 
+		                            ? (Integer) request.getAttribute("tamañoPagina") : 5;
+		
+		    int inicio = (paginaActual - 1) * tamañoPagina + 1;
+		    int fin = inicio + clientes.size() - 1;
+		    if (fin > totalRegistros) fin = totalRegistros;
+		%>
+		
+		<p class="text-muted">
+		    Mostrando <%= inicio %> a <%= fin %> de <%= totalRegistros %> registros
+		</p>
+		        
 
         <div class="d-flex justify-content-center mt-3">
             <% if (paginaActual > 1) { %>
-                <a class="btn btn-primary me-2" href="ListarServlet?pagina=<%=paginaActual-1%>">Anterior</a>
+                <a class="btn btn-primary me-2" href="ListarServlet?pagina=<%=paginaActual-1%>&cantidad=<%=request.getAttribute("tamañoPagina")%>">Anterior</a>
             <% } else { %>
                 <button class="btn btn-secondary me-2" disabled>Anterior</button>
             <% } %>
 
             <span class="btn btn-light disabled">Página <%=paginaActual%></span>
 
-            <a class="btn btn-primary ms-2" href="ListarServlet?pagina=<%=paginaActual+1%>">Siguiente</a>
+            <a class="btn btn-primary ms-2" href="ListarServlet?pagina=<%=paginaActual+1%>&cantidad=<%=request.getAttribute("tamañoPagina")%>">Siguiente</a>
         </div>
 
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function cambiarCantidad(valor) {
+    const paginaActual = <%= paginaActual %>;
+    window.location.href = "ListarServlet?cantidad=" + valor + "&pagina=" + paginaActual;
+}
+</script>
+
 </body>
 </html>

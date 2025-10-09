@@ -136,5 +136,26 @@ public class ClienteDAO extends DAO {
         return existe;
     }
 
+    public int contarClientes() {
+        int total = 0;
+        String sql = "SELECT COUNT(*) AS total FROM clientes";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                total = rs.getInt("total");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("❌ Error SQL al contar clientes: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("⚠️ Error general al contar clientes: " + e.getMessage());
+        }
+
+        return total;
+    }
+
 
 }
