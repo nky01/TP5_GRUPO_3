@@ -78,4 +78,27 @@ public class ClienteDAO extends DAO {
         }
         return lista;
     }
-  }
+    public boolean existeCorreo(String correo) {
+        boolean existe = false;
+        String sql = "SELECT COUNT(*) FROM clientes WHERE correo_electronico = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, correo);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    existe = rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ Error SQL al verificar correo: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("⚠️ Error general al verificar correo: " + e.getMessage());
+        }
+
+        return existe;
+    }
+
+
+}
